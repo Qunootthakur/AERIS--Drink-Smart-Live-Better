@@ -753,47 +753,47 @@ def checkout_dialog():
         **Delivery:** Demo only
         """)
 
-        st.markdown(
-            f"""
+        total = st.session_state.cart * 2499
+
+        html(f"""
+        <div style="
+            padding:20px;
+            margin-top:20px;
+            border-radius:16px;
+            background:#071e24;
+            border:1px solid rgba(167,255,223,.18);
+        ">
+
             <div style="
-                padding:20px;
-                margin-top:20px;
-                border-radius:16px;
-                background:#071e24;
-                border:1px solid rgba(167,255,223,.18);
+                color:#8fa39f;
+                font-size:11px;
+                letter-spacing:2px;
             ">
-
-                <div style="
-                    color:#8fa39f;
-                    font-size:11px;
-                    letter-spacing:2px;
-                ">
-                    ORDER SUMMARY
-                </div>
-
-                <div style="
-                    color:white;
-                    font-size:22px;
-                    margin-top:8px;
-                ">
-                    AERIS One × {st.session_state.cart}
-                </div>
-
-                <div style="
-                    color:#a7ffdf;
-                    font-size:25px;
-                    margin-top:8px;
-                ">
-                    ₹{st.session_state.cart * 2499:,}
-                </div>
-
+                ORDER SUMMARY
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+
+            <div style="
+                color:white;
+                font-size:22px;
+                margin-top:8px;
+            ">
+                AERIS One × {st.session_state.cart}
+            </div>
+
+            <div style="
+                color:#a7ffdf;
+                font-size:25px;
+                margin-top:8px;
+            ">
+                ₹{total:,}
+            </div>
+
+        </div>
+        """)
 
         if st.button(
             "Close",
+            key="checkout_close",
             use_container_width=True
         ):
 
@@ -810,33 +810,30 @@ def checkout_dialog():
     # CHECKOUT HEADER
     # ========================================================
 
-    st.markdown(
-        """
+    html("""
+    <div style="
+        margin-bottom:20px;
+    ">
+
         <div style="
-            margin-bottom:20px;
+            color:#a7ffdf;
+            font-size:11px;
+            letter-spacing:3px;
+            text-transform:uppercase;
         ">
-
-            <div style="
-                color:#a7ffdf;
-                font-size:11px;
-                letter-spacing:3px;
-                text-transform:uppercase;
-            ">
-                AERIS ONE
-            </div>
-
-            <div style="
-                color:white;
-                font-size:30px;
-                margin-top:5px;
-            ">
-                Complete your order
-            </div>
-
+            AERIS ONE
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+
+        <div style="
+            color:white;
+            font-size:30px;
+            margin-top:5px;
+        ">
+            Complete your order
+        </div>
+
+    </div>
+    """)
 
 
     # ========================================================
@@ -844,58 +841,53 @@ def checkout_dialog():
     # ========================================================
 
     quantity = st.session_state.cart
-
     total = quantity * 2499
 
+    html(f"""
+    <div style="
+        padding:18px;
+        margin-bottom:25px;
+        border-radius:16px;
+        background:#071e24;
+        border:1px solid rgba(167,255,223,.18);
+    ">
 
-    st.markdown(
-        f"""
         <div style="
-            padding:18px;
-            margin-bottom:25px;
-            border-radius:16px;
-            background:#071e24;
-            border:1px solid rgba(167,255,223,.18);
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
         ">
 
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-            ">
+            <div>
 
-                <div>
-
-                    <div style="
-                        color:white;
-                        font-size:17px;
-                    ">
-                        AERIS One
-                    </div>
-
-                    <div style="
-                        color:#8fa39f;
-                        font-size:12px;
-                        margin-top:4px;
-                    ">
-                        ₹2,499 × {quantity}
-                    </div>
-
+                <div style="
+                    color:white;
+                    font-size:17px;
+                ">
+                    AERIS One
                 </div>
 
                 <div style="
-                    color:#a7ffdf;
-                    font-size:24px;
+                    color:#8fa39f;
+                    font-size:12px;
+                    margin-top:4px;
                 ">
-                    ₹{total:,}
+                    ₹2,499 × {quantity}
                 </div>
 
             </div>
 
+            <div style="
+                color:#a7ffdf;
+                font-size:24px;
+            ">
+                ₹{total:,}
+            </div>
+
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+
+    </div>
+    """)
 
 
     # ========================================================
