@@ -628,7 +628,6 @@ except Exception:
     hero_image = ""
 
 
-# Replace placeholder in the CSS with actual image
 html(f"""
 <style>
 
@@ -797,36 +796,46 @@ def home():
         <div>
 
             <div class="eyebrow">
-                AERIS ONE
+                AERIS ONE • SMART HYDRATION
             </div>
+
 
             <div class="title">
                 More than a bottle.
             </div>
 
+
             <div class="text">
 
-                A smart hydration companion
-                designed for modern routines.
+                AERIS One is a smart hydration companion
+                designed to make staying hydrated easier,
+                smarter and more natural throughout your day.
 
-                AERIS One combines intelligent
-                hydration reminders, live temperature
-                indication and an insulated body
-                into one sleek everyday bottle.
+                Combining a premium reusable design with
+                intelligent hydration cues and live temperature
+                indication, AERIS brings technology into one
+                of the simplest parts of your daily routine.
 
             </div>
 
 
+            <!-- QUICK STATS -->
+
             <div style="
-                display:flex;
-                gap:35px;
-                flex-wrap:wrap;
+                display:grid;
+                grid-template-columns:repeat(2, minmax(120px, 1fr));
+                gap:12px;
                 margin-top:30px;
-                margin-bottom:25px;
+                margin-bottom:28px;
             ">
 
 
-                <div>
+                <div style="
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
+                ">
 
                     <div style="
                         color:#a7ffdf;
@@ -838,9 +847,9 @@ def home():
 
                     <div style="
                         color:#8fa39f;
-                        font-size:11px;
-                        letter-spacing:1px;
-                        margin-top:5px;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
                     ">
                         LIVE TEMPERATURE
                     </div>
@@ -848,7 +857,12 @@ def home():
                 </div>
 
 
-                <div>
+                <div style="
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
+                ">
 
                     <div style="
                         color:#a7ffdf;
@@ -860,9 +874,9 @@ def home():
 
                     <div style="
                         color:#8fa39f;
-                        font-size:11px;
-                        letter-spacing:1px;
-                        margin-top:5px;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
                     ">
                         HYDRATION CUES
                     </div>
@@ -870,7 +884,12 @@ def home():
                 </div>
 
 
-                <div>
+                <div style="
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
+                ">
 
                     <div style="
                         color:#a7ffdf;
@@ -882,9 +901,9 @@ def home():
 
                     <div style="
                         color:#8fa39f;
-                        font-size:11px;
-                        letter-spacing:1px;
-                        margin-top:5px;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
                     ">
                         TEMPERATURE RETENTION
                     </div>
@@ -892,27 +911,295 @@ def home():
                 </div>
 
 
+                <div style="
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
+                ">
+
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        REUSABLE
+                    </div>
+
+                    <div style="
+                        color:#8fa39f;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
+                    ">
+                        EVERYDAY DESIGN
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FEATURES -->
+
+            <div style="
+                color:white;
+                font-size:18px;
+                margin-bottom:15px;
+            ">
+                Designed around you.
             </div>
 
 
             <div style="
-                color:white;
-                font-size:30px;
-                font-weight:400;
-                margin-bottom:20px;
-            ">
-                ₹2,499
-            </div>
-
-
-            <div class="text" style="
-                font-size:13px;
+                display:flex;
+                flex-direction:column;
+                gap:13px;
                 margin-bottom:25px;
             ">
 
-                Built for college, office, gym and travel.
-                Reusable, leak-resistant and designed
-                to fit seamlessly into your everyday life.
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Smart Hydration Reminders
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Subtle cues help encourage regular
+                            hydration throughout your day.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Live Temperature Display
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Check your drink temperature
+                            at a glance.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Insulated Construction
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Designed to help maintain your
+                            drink's temperature for longer.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Built for Everyday Life
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Designed for college, office,
+                            gym and travel.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRODUCT DETAILS -->
+
+            <div style="
+                padding-top:20px;
+                border-top:1px solid rgba(255,255,255,.08);
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:12px;
+                ">
+
+                    <span style="
+                        color:#8fa39f;
+                        font-size:12px;
+                        letter-spacing:1px;
+                    ">
+                        AERIS ONE
+                    </span>
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:12px;
+                    ">
+                        PREMIUM EDITION
+                    </span>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    gap:20px;
+                ">
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:32px;
+                            font-weight:400;
+                        ">
+                            ₹2,499
+                        </div>
+
+                        <div style="
+                            color:#7f918d;
+                            font-size:11px;
+                            margin-top:4px;
+                        ">
+                            Smart hydration. Everyday simplicity.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LIFESTYLE -->
+
+            <div style="
+                margin-top:22px;
+                color:#8fa39f;
+                font-size:12px;
+                line-height:1.6;
+            ">
+
+                <span style="color:#a7ffdf;">
+                    College
+                </span>
+                &nbsp;•&nbsp;
+
+                <span style="color:#a7ffdf;">
+                    Office
+                </span>
+                &nbsp;•&nbsp;
+
+                <span style="color:#a7ffdf;">
+                    Gym
+                </span>
+                &nbsp;•&nbsp;
+
+                <span style="color:#a7ffdf;">
+                    Travel
+                </span>
 
             </div>
 
