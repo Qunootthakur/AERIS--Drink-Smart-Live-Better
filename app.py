@@ -609,23 +609,29 @@ div.stButton > button:hover {
 
 hero_image_path = image_path("1.jpeg")
 
-# Convert Windows/local path to a browser-readable
-# base64 image for the CSS background.
 hero_image = ""
 
 try:
     hero_bytes = Path(hero_image_path).read_bytes()
+
     import base64
-    hero_encoded = base64.b64encode(hero_bytes).decode("utf-8")
-    hero_image = f"data:image/jpeg;base64,{hero_encoded}"
+
+    hero_encoded = base64.b64encode(
+        hero_bytes
+    ).decode("utf-8")
+
+    hero_image = (
+        f"data:image/jpeg;base64,{hero_encoded}"
+    )
+
 except Exception:
     hero_image = ""
 
 
 # Replace placeholder in the CSS with actual image
-# by injecting a small override.
 html(f"""
 <style>
+
 .hero {{
     background-image:
         linear-gradient(
@@ -636,6 +642,7 @@ html(f"""
         ),
         url("{hero_image}");
 }}
+
 </style>
 """)
 
@@ -710,7 +717,10 @@ with nav[6]:
 
 def home():
 
+    # ========================================================
     # HERO
+    # ========================================================
+
     html("""
     <div class="hero">
 
@@ -756,7 +766,10 @@ def home():
     """)
 
 
+    # ========================================================
     # PRODUCT
+    # ========================================================
+
     html("""
     <div class="section">
 
@@ -774,27 +787,138 @@ def home():
     )
 
 
+    # ========================================================
+    # PRODUCT INFORMATION
+    # ========================================================
+
     with left:
 
         html("""
         <div>
 
+            <div class="eyebrow">
+                AERIS ONE
+            </div>
+
             <div class="title">
-                Meet AERIS
+                More than a bottle.
             </div>
 
             <div class="text">
 
-                More than just a bottle —
-                it's a lifestyle upgrade.
+                A smart hydration companion
+                designed for modern routines.
 
-                Designed for your health,
-                your routine and a better planet.
+                AERIS One combines intelligent
+                hydration reminders, live temperature
+                indication and an insulated body
+                into one sleek everyday bottle.
+
+            </div>
+
+
+            <div style="
+                display:flex;
+                gap:35px;
+                flex-wrap:wrap;
+                margin-top:30px;
+                margin-bottom:25px;
+            ">
+
+
+                <div>
+
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        25°C
+                    </div>
+
+                    <div style="
+                        color:#8fa39f;
+                        font-size:11px;
+                        letter-spacing:1px;
+                        margin-top:5px;
+                    ">
+                        LIVE TEMPERATURE
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        SMART
+                    </div>
+
+                    <div style="
+                        color:#8fa39f;
+                        font-size:11px;
+                        letter-spacing:1px;
+                        margin-top:5px;
+                    ">
+                        HYDRATION CUES
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        INSULATED
+                    </div>
+
+                    <div style="
+                        color:#8fa39f;
+                        font-size:11px;
+                        letter-spacing:1px;
+                        margin-top:5px;
+                    ">
+                        TEMPERATURE RETENTION
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div style="
+                color:white;
+                font-size:30px;
+                font-weight:400;
+                margin-bottom:20px;
+            ">
+                ₹2,499
+            </div>
+
+
+            <div class="text" style="
+                font-size:13px;
+                margin-bottom:25px;
+            ">
+
+                Built for college, office, gym and travel.
+                Reusable, leak-resistant and designed
+                to fit seamlessly into your everyday life.
 
             </div>
 
         </div>
         """)
+
 
         if st.button(
             "Explore Features →",
@@ -807,6 +931,10 @@ def home():
             st.rerun()
 
 
+    # ========================================================
+    # PRODUCT IMAGE
+    # ========================================================
+
     with right:
 
         st.image(
@@ -815,7 +943,10 @@ def home():
         )
 
 
+    # ========================================================
     # FEATURES
+    # ========================================================
+
     html("""
     <div class="section">
 
@@ -894,7 +1025,10 @@ def home():
             """)
 
 
+    # ========================================================
     # SEGMENTATION
+    # ========================================================
+
     html("""
     <div class="light-section">
 
@@ -968,7 +1102,10 @@ def home():
             """)
 
 
+    # ========================================================
     # FUNNEL
+    # ========================================================
+
     html("""
     <div class="section">
 
@@ -1052,11 +1189,15 @@ def home():
     st.write("")
 
 
+    # ========================================================
     # IMAGE STRIP
+    # ========================================================
+
     image1, image2 = st.columns(
         2,
         gap="medium"
     )
+
 
     with image1:
 
@@ -1064,6 +1205,7 @@ def home():
             image_path("2.jpeg"),
             use_container_width=True
         )
+
 
     with image2:
 
