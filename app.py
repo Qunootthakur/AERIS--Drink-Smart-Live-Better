@@ -1,6 +1,5 @@
 import streamlit as st
 from pathlib import Path
-import base64
 
 # ============================================================
 # AERIS WEBSITE
@@ -14,28 +13,25 @@ st.set_page_config(
 )
 
 BASE_DIR = Path(__file__).resolve().parent
-ASSETS = BASE_DIR / "assets"
+
+# Images are stored in the SAME folder as app.py
+ASSETS = BASE_DIR
 
 
 # ============================================================
 # HELPERS
 # ============================================================
 
-def image_base64(filename):
-    path = ASSETS / filename
-
-    if not path.exists():
-        return ""
-
-    encoded = base64.b64encode(path.read_bytes()).decode("utf-8")
-    return f"data:image/jpeg;base64,{encoded}"
+def image_path(filename):
+    """
+    Returns the full path to an image stored
+    in the same folder as app.py.
+    """
+    return str(ASSETS / filename)
 
 
 def html(content):
     st.html(content)
-
-
-hero_image = image_base64("1.jpeg")
 
 
 # ============================================================
@@ -53,46 +49,47 @@ if "cart" not in st.session_state:
 # GLOBAL CSS
 # ============================================================
 
-html(f"""
+html("""
 <style>
 
-* {{
+* {
     box-sizing: border-box;
-}}
+}
 
 html,
-body {{
+body {
     margin: 0;
     padding: 0;
     background: #031015;
-}}
+}
 
-[data-testid="stAppViewContainer"] {{
+[data-testid="stAppViewContainer"] {
     background: #031015 !important;
-}}
+}
 
-[data-testid="stMainBlockContainer"] {{
+[data-testid="stMainBlockContainer"] {
     max-width: 100% !important;
     padding: 0 !important;
-}}
+}
 
-header[data-testid="stHeader"] {{
+header[data-testid="stHeader"] {
     background: transparent !important;
-}}
+}
 
-#MainMenu {{
+#MainMenu {
     visibility: hidden;
-}}
+}
 
-footer {{
+footer {
     visibility: hidden;
-}}
+}
+
 
 /* =========================================================
    NAVBAR
    ========================================================= */
 
-.navbar {{
+.navbar {
     height: 70px;
 
     display: flex;
@@ -105,27 +102,27 @@ footer {{
     border-bottom:
         1px solid
         rgba(255,255,255,.10);
-}}
+}
 
-.logo-symbol {{
+.logo-symbol {
     color: white;
     font-size: 29px;
     margin-right: 11px;
-}}
+}
 
-.logo {{
+.logo {
     color: white;
     font-size: 21px;
     letter-spacing: 8px;
     font-weight: 400;
-}}
+}
 
 
 /* =========================================================
    HERO
    ========================================================= */
 
-.hero {{
+.hero {
     min-height: 650px;
 
     display: flex;
@@ -140,17 +137,17 @@ footer {{
             rgba(2,16,22,.62) 40%,
             rgba(2,16,22,.08) 80%
         ),
-        url("{hero_image}");
+        url("__HERO_IMAGE__");
 
     background-size: cover;
     background-position: center;
-}}
+}
 
-.hero-content {{
+.hero-content {
     max-width: 590px;
-}}
+}
 
-.eyebrow {{
+.eyebrow {
     color: #a7ffdf;
 
     font-size: 11px;
@@ -160,9 +157,9 @@ footer {{
     text-transform: uppercase;
 
     margin-bottom: 18px;
-}}
+}
 
-.hero-title {{
+.hero-title {
     color: white;
 
     font-size:
@@ -173,9 +170,9 @@ footer {{
     line-height: .97;
 
     margin: 0 0 25px;
-}}
+}
 
-.hero-text {{
+.hero-text {
     color:
         rgba(255,255,255,.86);
 
@@ -184,9 +181,9 @@ footer {{
     line-height: 1.55;
 
     max-width: 470px;
-}}
+}
 
-.hero-button {{
+.hero-button {
     display: inline-block;
 
     margin-top: 24px;
@@ -202,9 +199,9 @@ footer {{
     color: white;
 
     font-size: 14px;
-}}
+}
 
-.hero-features {{
+.hero-features {
     display: flex;
 
     gap: 25px;
@@ -216,28 +213,28 @@ footer {{
     color: #d8e4e1;
 
     font-size: 13px;
-}}
+}
 
 
 /* =========================================================
    SECTIONS
    ========================================================= */
 
-.section {{
+.section {
     padding: 75px 8%;
 
     background: #031015;
-}}
+}
 
-.light-section {{
+.light-section {
     padding: 75px 8%;
 
     background: #f2f0ea;
 
     color: #071216;
-}}
+}
 
-.title {{
+.title {
     color: white;
 
     font-size:
@@ -248,13 +245,13 @@ footer {{
     line-height: 1.05;
 
     margin-bottom: 18px;
-}}
+}
 
-.light-section .title {{
+.light-section .title {
     color: #071216;
-}}
+}
 
-.text {{
+.text {
     color: #aebfbc;
 
     max-width: 620px;
@@ -262,18 +259,18 @@ footer {{
     font-size: 16px;
 
     line-height: 1.7;
-}}
+}
 
-.light-section .text {{
+.light-section .text {
     color: #4d595b;
-}}
+}
 
 
 /* =========================================================
    CARDS
    ========================================================= */
 
-.card {{
+.card {
     min-height: 190px;
 
     padding: 28px;
@@ -290,15 +287,15 @@ footer {{
             #0a2527,
             #061418
         );
-}}
+}
 
-.icon {{
+.icon {
     color: #a7ffdf;
 
     font-size: 30px;
-}}
+}
 
-.card-title {{
+.card-title {
     color: white;
 
     font-size: 20px;
@@ -306,22 +303,22 @@ footer {{
     margin-top: 15px;
 
     margin-bottom: 10px;
-}}
+}
 
-.card-text {{
+.card-text {
     color: #aebfbc;
 
     font-size: 14px;
 
     line-height: 1.6;
-}}
+}
 
 
 /* =========================================================
    SEGMENTATION
    ========================================================= */
 
-.segment {{
+.segment {
     min-height: 145px;
 
     padding: 24px;
@@ -335,38 +332,38 @@ footer {{
     border:
         1px solid
         rgba(255,255,255,.08);
-}}
+}
 
-.segment-title {{
+.segment-title {
     color: white;
 
     font-size: 18px;
 
     margin-bottom: 10px;
-}}
+}
 
-.segment-text {{
+.segment-text {
     color: #aebfbc;
 
     font-size: 13px;
 
     line-height: 1.6;
-}}
+}
 
 
 /* =========================================================
    FUNNEL
    ========================================================= */
 
-.funnel {{
+.funnel {
     display: flex;
 
     gap: 8px;
 
     flex-wrap: wrap;
-}}
+}
 
-.funnel-item {{
+.funnel-item {
     flex: 1;
 
     min-width: 160px;
@@ -378,9 +375,9 @@ footer {{
     border-top:
         1px solid
         rgba(165,255,220,.30);
-}}
+}
 
-.funnel-number {{
+.funnel-number {
     width: 50px;
     height: 50px;
 
@@ -398,30 +395,30 @@ footer {{
     border-radius: 50%;
 
     color: #a7ffdf;
-}}
+}
 
-.funnel-title {{
+.funnel-title {
     color: white;
 
     font-size: 13px;
 
     font-weight: 600;
-}}
+}
 
-.funnel-text {{
+.funnel-text {
     color: #8fa39f;
 
     font-size: 12px;
 
     margin-top: 8px;
-}}
+}
 
 
 /* =========================================================
    SHOP
    ========================================================= */
 
-.shop-box {{
+.shop-box {
     padding: 35px;
 
     border-radius: 24px;
@@ -436,22 +433,22 @@ footer {{
             #0a2025,
             #031014
         );
-}}
+}
 
-.price {{
+.price {
     color: white;
 
     font-size: 38px;
 
     margin: 20px 0;
-}}
+}
 
 
 /* =========================================================
    STREAMLIT BUTTONS
    ========================================================= */
 
-div.stButton > button {{
+div.stButton > button {
     min-height: 42px !important;
 
     padding:
@@ -481,9 +478,9 @@ div.stButton > button {{
 
     transition:
         .2s ease !important;
-}}
+}
 
-div.stButton > button:hover {{
+div.stButton > button:hover {
     background:
         rgba(167,255,223,.10) !important;
 
@@ -492,26 +489,26 @@ div.stButton > button:hover {{
 
     transform:
         translateY(-1px);
-}}
+}
 
 
 /* =========================================================
    IMAGES
    ========================================================= */
 
-[data-testid="stImage"] {{
+[data-testid="stImage"] {
     margin-top: 5px !important;
 
     margin-bottom: 10px !important;
-}}
+}
 
-[data-testid="stImage"] img {{
+[data-testid="stImage"] img {
     width: 100% !important;
 
     display: block !important;
 
     border-radius: 18px !important;
-}}
+}
 
 
 /* =========================================================
@@ -520,7 +517,7 @@ div.stButton > button:hover {{
 
 [data-testid="stTextInput"] input,
 [data-testid="stTextArea"] textarea,
-[data-testid="stNumberInput"] input {{
+[data-testid="stNumberInput"] input {
     background: #08191e !important;
 
     color: white !important;
@@ -530,9 +527,9 @@ div.stButton > button:hover {{
         rgba(167,255,223,.18) !important;
 
     border-radius: 10px !important;
-}}
+}
 
-[data-testid="stSelectbox"] > div > div {{
+[data-testid="stSelectbox"] > div > div {
     background: #08191e !important;
 
     border:
@@ -540,14 +537,14 @@ div.stButton > button:hover {{
         rgba(167,255,223,.18) !important;
 
     border-radius: 10px !important;
-}}
+}
 
 
 /* =========================================================
    FOOTER
    ========================================================= */
 
-.footer {{
+.footer {
     padding: 38px 8%;
 
     border-top:
@@ -559,49 +556,86 @@ div.stButton > button:hover {{
     color: #7f918d;
 
     font-size: 12px;
-}}
+}
 
-.footer-logo {{
+.footer-logo {
     color: white;
 
     letter-spacing: 6px;
-}}
+}
 
 
 /* =========================================================
    MOBILE
    ========================================================= */
 
-@media(max-width:800px) {{
+@media(max-width:800px) {
 
-    .hero {{
+    .hero {
         min-height: 600px;
 
         padding: 55px 6%;
 
         background-position:
             65% center;
-    }}
+    }
 
-    .hero-title {{
+    .hero-title {
         font-size: 50px;
-    }}
+    }
 
     .section,
-    .light-section {{
+    .light-section {
         padding: 55px 6%;
-    }}
+    }
 
-    .funnel {{
+    .funnel {
         flex-direction: column;
-    }}
+    }
 
-    .funnel-item {{
+    .funnel-item {
         min-width: 100%;
-    }}
+    }
 
+}
+
+</style>
+""")
+
+
+# ============================================================
+# HERO IMAGE
+# ============================================================
+
+hero_image_path = image_path("1.jpeg")
+
+# Convert Windows/local path to a browser-readable
+# base64 image for the CSS background.
+hero_image = ""
+
+try:
+    hero_bytes = Path(hero_image_path).read_bytes()
+    import base64
+    hero_encoded = base64.b64encode(hero_bytes).decode("utf-8")
+    hero_image = f"data:image/jpeg;base64,{hero_encoded}"
+except Exception:
+    hero_image = ""
+
+
+# Replace placeholder in the CSS with actual image
+# by injecting a small override.
+html(f"""
+<style>
+.hero {{
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(2,16,22,.94) 0%,
+            rgba(2,16,22,.62) 40%,
+            rgba(2,16,22,.08) 80%
+        ),
+        url("{hero_image}");
 }}
-
 </style>
 """)
 
@@ -776,7 +810,7 @@ def home():
     with right:
 
         st.image(
-            str(ASSETS / "3.jpeg"),
+            image_path("3.jpeg"),
             use_container_width=True
         )
 
@@ -1027,14 +1061,14 @@ def home():
     with image1:
 
         st.image(
-            str(ASSETS / "2.jpeg"),
+            image_path("2.jpeg"),
             use_container_width=True
         )
 
     with image2:
 
         st.image(
-            str(ASSETS / "6.jpeg"),
+            image_path("6.jpeg"),
             use_container_width=True
         )
 
@@ -1069,7 +1103,7 @@ def shop():
     with image_col:
 
         st.image(
-            str(ASSETS / "3.jpeg"),
+            image_path("3.jpeg"),
             use_container_width=True
         )
 
@@ -1161,7 +1195,7 @@ def shop():
     with image_col:
 
         st.image(
-            str(ASSETS / "2.jpeg"),
+            image_path("2.jpeg"),
             use_container_width=True
         )
 
@@ -1243,7 +1277,7 @@ def features_page():
     with image_col:
 
         st.image(
-            str(ASSETS / "6.jpeg"),
+            image_path("6.jpeg"),
             use_container_width=True
         )
 
@@ -1304,7 +1338,7 @@ def features_page():
 
 
     st.image(
-        str(ASSETS / "7.jpeg"),
+        image_path("7.jpeg"),
         use_container_width=True
     )
 
@@ -1324,7 +1358,7 @@ def about():
     with image_col:
 
         st.image(
-            str(ASSETS / "5.jpeg"),
+            image_path("5.jpeg"),
             use_container_width=True
         )
 
