@@ -1,33 +1,43 @@
 import streamlit as st
 from pathlib import Path
+import base64
 
-
-# =========================================================
-# PAGE CONFIG
-# =========================================================
+# ============================================================
+# AERIS WEBSITE
+# ============================================================
 
 st.set_page_config(
-    page_title="AERIS — Smart Hydration",
+    page_title="AERIS | Drink Smart. Live Better.",
     page_icon="💧",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
-
-
-# =========================================================
-# IMAGE PATHS
-# =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# Images are stored in the SAME folder as app.py
+ASSETS = BASE_DIR
+
+
+# ============================================================
+# HELPERS
+# ============================================================
 
 def image_path(filename):
-    return str(BASE_DIR / filename)
+    """
+    Returns the full path to an image stored
+    in the same folder as app.py.
+    """
+    return str(ASSETS / filename)
 
 
-# =========================================================
+def html(content):
+    st.html(content)
+
+
+# ============================================================
 # SESSION STATE
-# =========================================================
+# ============================================================
 
 if "page" not in st.session_state:
     st.session_state.page = "Home"
@@ -42,487 +52,739 @@ if "order_placed" not in st.session_state:
     st.session_state.order_placed = False
 
 
-# =========================================================
-# CSS
-# =========================================================
+# ============================================================
+# GLOBAL CSS
+# ============================================================
 
-st.markdown(
-    """
-    <style>
+html("""
+<style>
 
-    /* ================================
-       GLOBAL
-       ================================ */
+* {
+    box-sizing: border-box;
+}
 
-    .stApp {
-        background:
-            radial-gradient(
-                circle at 50% 0%,
-                #19383d 0%,
-                #0c1b20 45%,
-                #071217 100%
-            );
-        color: white;
-    }
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: #031015;
+}
 
-    .block-container {
-        max-width: 1400px;
-        padding-top: 1.5rem;
-        padding-bottom: 2rem;
-    }
+[data-testid="stAppViewContainer"] {
+    background: #031015 !important;
+}
 
-    /* Hide Streamlit default elements */
+[data-testid="stMainBlockContainer"] {
+    max-width: 100% !important;
+    padding: 0 !important;
+}
 
-    #MainMenu {
-        visibility: hidden;
-    }
+header[data-testid="stHeader"] {
+    background: transparent !important;
+}
 
-    footer {
-        visibility: hidden;
-    }
+#MainMenu {
+    visibility: hidden;
+}
 
-    header {
-        background: transparent !important;
-    }
+footer {
+    visibility: hidden;
+}
 
-    /* ================================
-       BUTTONS
-       ================================ */
 
-    .stButton > button {
-        border-radius: 30px;
-        border: 1px solid #6e9d9d;
-        background: transparent;
-        color: white;
-        height: 42px;
-        transition: 0.25s ease;
-    }
+/* =========================================================
+   NAVBAR
+   ========================================================= */
 
-    .stButton > button:hover {
-        border-color: #b7dddd;
-        background: rgba(130, 190, 190, 0.10);
-        color: white;
-    }
+.navbar {
+    height: 70px;
 
-    /* Primary button */
+    display: flex;
+    align-items: center;
 
-    .stButton > button[kind="primary"] {
-        background: #8fbebe;
-        border: none;
-        color: #071217;
-        font-weight: 600;
-    }
+    padding: 0 7%;
 
-    .stButton > button[kind="primary"]:hover {
-        background: #b0d6d6;
-        color: #071217;
-    }
+    background: #031015;
 
-    /* ================================
-       INPUTS
-       ================================ */
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.10);
+}
 
-    .stTextInput input,
-    .stTextArea textarea {
-        background: #101f24 !important;
-        border: 1px solid #345158 !important;
-        color: white !important;
-        border-radius: 9px !important;
-    }
+.logo-symbol {
+    color: white;
+    font-size: 29px;
+    margin-right: 11px;
+}
 
-    .stTextInput input:focus,
-    .stTextArea textarea:focus {
-        border-color: #8fbebe !important;
-        box-shadow: none !important;
-    }
+.logo {
+    color: white;
+    font-size: 21px;
+    letter-spacing: 8px;
+    font-weight: 400;
+}
 
-    .stSelectbox > div > div,
-    .stNumberInput > div > div {
-        background: #101f24 !important;
-        border-color: #345158 !important;
-        color: white !important;
-    }
 
-    label {
-        color: #a8bab9 !important;
-    }
+/* =========================================================
+   HERO
+   ========================================================= */
 
-    /* ================================
-       NAVBAR
-       ================================ */
+.hero {
+    min-height: 650px;
 
-    .navbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 8px 0 25px 0;
-        border-bottom: 1px solid rgba(140, 180, 180, 0.15);
-        margin-bottom: 35px;
-    }
+    display: flex;
+    align-items: center;
 
-    .logo {
-        font-size: 24px;
-        font-weight: 500;
-        letter-spacing: 5px;
-        color: white;
-    }
+    padding: 70px 8%;
 
-    .logo-sub {
-        font-size: 9px;
-        letter-spacing: 3px;
-        color: #8fa39f;
-        margin-top: 3px;
-    }
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(2,16,22,.94) 0%,
+            rgba(2,16,22,.62) 40%,
+            rgba(2,16,22,.08) 80%
+        ),
+        url("__HERO_IMAGE__");
 
-    /* ================================
-       HERO
-       ================================ */
+    background-size: cover;
+    background-position: center;
+}
 
-    .hero-small {
-        color: #8fa39f;
-        font-size: 11px;
-        letter-spacing: 4px;
-        text-transform: uppercase;
-        margin-bottom: 15px;
+.hero-content {
+    max-width: 590px;
+}
+
+.eyebrow {
+    color: #a7ffdf;
+
+    font-size: 11px;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 18px;
+}
+
+.hero-title {
+    color: white;
+
+    font-size:
+        clamp(52px, 6vw, 85px);
+
+    font-weight: 400;
+
+    line-height: .97;
+
+    margin: 0 0 25px;
+}
+
+.hero-text {
+    color:
+        rgba(255,255,255,.86);
+
+    font-size: 18px;
+
+    line-height: 1.55;
+
+    max-width: 470px;
+}
+
+.hero-button {
+    display: inline-block;
+
+    margin-top: 24px;
+
+    padding: 12px 25px;
+
+    border:
+        1px solid
+        white;
+
+    border-radius: 999px;
+
+    color: white;
+
+    font-size: 14px;
+}
+
+.hero-features {
+    display: flex;
+
+    gap: 25px;
+
+    flex-wrap: wrap;
+
+    margin-top: 32px;
+
+    color: #d8e4e1;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.section {
+    padding: 75px 8%;
+
+    background: #031015;
+}
+
+.light-section {
+    padding: 75px 8%;
+
+    background: #f2f0ea;
+
+    color: #071216;
+}
+
+.title {
+    color: white;
+
+    font-size:
+        clamp(36px, 4.5vw, 55px);
+
+    font-weight: 400;
+
+    line-height: 1.05;
+
+    margin-bottom: 18px;
+}
+
+.light-section .title {
+    color: #071216;
+}
+
+.text {
+    color: #aebfbc;
+
+    max-width: 620px;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+}
+
+.light-section .text {
+    color: #4d595b;
+}
+
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
+.card {
+    min-height: 190px;
+
+    padding: 28px;
+
+    border-radius: 20px;
+
+    border:
+        1px solid
+        rgba(165,255,220,.16);
+
+    background:
+        linear-gradient(
+            145deg,
+            #0a2527,
+            #061418
+        );
+}
+
+.icon {
+    color: #a7ffdf;
+
+    font-size: 30px;
+}
+
+.card-title {
+    color: white;
+
+    font-size: 20px;
+
+    margin-top: 15px;
+
+    margin-bottom: 10px;
+}
+
+.card-text {
+    color: #aebfbc;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   SEGMENTATION
+   ========================================================= */
+
+.segment {
+    min-height: 145px;
+
+    padding: 24px;
+
+    margin-bottom: 15px;
+
+    border-radius: 15px;
+
+    background: #071e24;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+}
+
+.segment-title {
+    color: white;
+
+    font-size: 18px;
+
+    margin-bottom: 10px;
+}
+
+.segment-text {
+    color: #aebfbc;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FUNNEL
+   ========================================================= */
+
+.funnel {
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+}
+
+.funnel-item {
+    flex: 1;
+
+    min-width: 160px;
+
+    text-align: center;
+
+    padding: 25px 10px;
+
+    border-top:
+        1px solid
+        rgba(165,255,220,.30);
+}
+
+.funnel-number {
+    width: 50px;
+    height: 50px;
+
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border:
+        1px solid
+        #a7ffdf;
+
+    border-radius: 50%;
+
+    color: #a7ffdf;
+}
+
+.funnel-title {
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.funnel-text {
+    color: #8fa39f;
+
+    font-size: 12px;
+
+    margin-top: 8px;
+}
+
+
+/* =========================================================
+   SHOP
+   ========================================================= */
+
+.shop-box {
+    padding: 35px;
+
+    border-radius: 24px;
+
+    border:
+        1px solid
+        rgba(165,255,220,.16);
+
+    background:
+        linear-gradient(
+            135deg,
+            #0a2025,
+            #031014
+        );
+}
+
+.price {
+    color: white;
+
+    font-size: 38px;
+
+    margin: 20px 0;
+}
+
+
+/* =========================================================
+   STREAMLIT BUTTONS
+   ========================================================= */
+
+div.stButton > button {
+    min-height: 42px !important;
+
+    padding:
+        8px 18px !important;
+
+    border-radius:
+        999px !important;
+
+    background:
+        rgba(3,16,21,.55) !important;
+
+    border:
+        1px solid
+        rgba(167,255,223,.48) !important;
+
+    color:
+        #f7fbfa !important;
+
+    font-size:
+        13px !important;
+
+    font-weight:
+        500 !important;
+
+    box-shadow:
+        none !important;
+
+    transition:
+        .2s ease !important;
+}
+
+div.stButton > button:hover {
+    background:
+        rgba(167,255,223,.10) !important;
+
+    border-color:
+        #a7ffdf !important;
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   IMAGES
+   ========================================================= */
+
+[data-testid="stImage"] {
+    margin-top: 5px !important;
+
+    margin-bottom: 10px !important;
+}
+
+[data-testid="stImage"] img {
+    width: 100% !important;
+
+    display: block !important;
+
+    border-radius: 18px !important;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+[data-testid="stTextInput"] input,
+[data-testid="stTextArea"] textarea,
+[data-testid="stNumberInput"] input {
+    background: #08191e !important;
+
+    color: white !important;
+
+    border:
+        1px solid
+        rgba(167,255,223,.18) !important;
+
+    border-radius: 10px !important;
+}
+
+[data-testid="stSelectbox"] > div > div {
+    background: #08191e !important;
+
+    border:
+        1px solid
+        rgba(167,255,223,.18) !important;
+
+    border-radius: 10px !important;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+    padding: 38px 8%;
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.08);
+
+    background: #031015;
+
+    color: #7f918d;
+
+    font-size: 12px;
+}
+
+.footer-logo {
+    color: white;
+
+    letter-spacing: 6px;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:800px) {
+
+    .hero {
+        min-height: 600px;
+
+        padding: 55px 6%;
+
+        background-position:
+            65% center;
     }
 
     .hero-title {
-        font-size: clamp(45px, 6vw, 82px);
-        line-height: 0.95;
-        font-weight: 300;
-        letter-spacing: -3px;
-        color: white;
-        margin-bottom: 25px;
+        font-size: 50px;
     }
 
-    .hero-text {
-        color: #a9bcbb;
-        font-size: 16px;
-        line-height: 1.8;
-        max-width: 560px;
+    .section,
+    .light-section {
+        padding: 55px 6%;
     }
 
-    /* ================================
-       PRODUCT CARD
-       ================================ */
-
-    .product-card {
-        background: rgba(20, 43, 48, 0.75);
-        border: 1px solid #304b50;
-        border-radius: 18px;
-        padding: 25px;
+    .funnel {
+        flex-direction: column;
     }
 
-    .product-label {
-        color: #8fa39f;
-        font-size: 10px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
+    .funnel-item {
+        min-width: 100%;
     }
 
-    .product-name {
-        color: white;
-        font-size: 31px;
-        margin-top: 5px;
-    }
+}
 
-    .product-description {
-        color: #9fb1b0;
-        font-size: 14px;
-        line-height: 1.7;
-        margin-top: 12px;
-    }
-
-    .price {
-        color: white;
-        font-size: 27px;
-        font-weight: 500;
-    }
-
-    /* ================================
-       INFO CARDS
-       ================================ */
-
-    .info-card {
-        background: rgba(16, 39, 44, 0.65);
-        border: 1px solid #29464b;
-        border-radius: 15px;
-        padding: 22px;
-        height: 100%;
-    }
-
-    .info-number {
-        font-size: 30px;
-        color: white;
-        margin-bottom: 5px;
-    }
-
-    .info-title {
-        color: #8fa39f;
-        font-size: 10px;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-    }
-
-    /* ================================
-       FEATURE CARDS
-       ================================ */
-
-    .feature-card {
-        background: rgba(16, 39, 44, 0.65);
-        border: 1px solid #29464b;
-        border-radius: 16px;
-        padding: 25px;
-        min-height: 190px;
-    }
-
-    .feature-icon {
-        font-size: 28px;
-        margin-bottom: 15px;
-    }
-
-    .feature-title {
-        color: white;
-        font-size: 18px;
-        margin-bottom: 10px;
-    }
-
-    .feature-text {
-        color: #91a6a5;
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    /* ================================
-       SECTION HEADINGS
-       ================================ */
-
-    .section-label {
-        color: #8fa39f;
-        font-size: 10px;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        margin-bottom: 10px;
-    }
-
-    .section-title {
-        color: white;
-        font-size: 38px;
-        font-weight: 300;
-        margin-bottom: 15px;
-    }
-
-    /* ================================
-       FOOTER
-       ================================ */
-
-    .footer {
-        border-top: 1px solid rgba(140, 180, 180, 0.15);
-        margin-top: 70px;
-        padding-top: 25px;
-        color: #718785;
-        font-size: 12px;
-        text-align: center;
-    }
-
-    /* ================================
-       CART SUMMARY
-       ================================ */
-
-    .cart-summary {
-        background: #102b30;
-        border: 1px solid #29484d;
-        border-radius: 14px;
-        padding: 18px;
-    }
-
-    .cart-product-name {
-        color: white;
-        font-size: 17px;
-    }
-
-    .cart-product-sub {
-        color: #8fa39f;
-        font-size: 12px;
-        margin-top: 4px;
-    }
-
-    /* ================================
-       DIALOG
-       ================================ */
-
-    [data-testid="stDialog"] {
-        background: #0b1b20 !important;
-    }
-
-    [data-testid="stDialog"] > div {
-        background: #0b1b20 !important;
-    }
-
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+</style>
+""")
 
 
-# =========================================================
-# NAVIGATION
-# =========================================================
+# ============================================================
+# HERO IMAGE
+# ============================================================
 
-nav = st.columns([2.5, 1, 1, 1, 1, 1, 0.8])
+hero_image_path = image_path("1.jpeg")
 
-with nav[0]:
-    st.markdown(
-        """
-        <div class="logo">AERIS</div>
-        <div class="logo-sub">SMART HYDRATION</div>
-        """,
-        unsafe_allow_html=True
+hero_image = ""
+
+try:
+
+    hero_bytes = Path(hero_image_path).read_bytes()
+
+    hero_encoded = base64.b64encode(
+        hero_bytes
+    ).decode("utf-8")
+
+    hero_image = (
+        f"data:image/jpeg;base64,{hero_encoded}"
     )
 
-with nav[1]:
-    if st.button("Home", use_container_width=True):
-        st.session_state.page = "Home"
-        st.rerun()
+except Exception:
 
-with nav[2]:
-    if st.button("Shop", use_container_width=True):
-        st.session_state.page = "Shop"
-        st.rerun()
+    hero_image = ""
 
-with nav[3]:
-    if st.button("Features", use_container_width=True):
-        st.session_state.page = "Features"
-        st.rerun()
 
-with nav[4]:
-    if st.button("About", use_container_width=True):
-        st.session_state.page = "About"
-        st.rerun()
+html(f"""
+<style>
 
-with nav[5]:
-    if st.button("Contact", use_container_width=True):
-        st.session_state.page = "Contact"
-        st.rerun()
+.hero {{
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(2,16,22,.94) 0%,
+            rgba(2,16,22,.62) 40%,
+            rgba(2,16,22,.08) 80%
+        ),
+        url("{hero_image}");
+}}
+
+</style>
+""")
+
+
+# ============================================================
+# NAVBAR
+# ============================================================
+
+html("""
+<div class="navbar">
+
+    <span class="logo-symbol">
+        ♢
+    </span>
+
+    <span class="logo">
+        AERIS
+    </span>
+
+</div>
+""")
+
+
+# ============================================================
+# NAVIGATION
+# ============================================================
+
+nav = st.columns(
+    [4.4, 1, 1, 1, 1, 1, .6]
+)
+
+pages = [
+    ("Home", nav[1]),
+    ("Shop", nav[2]),
+    ("Features", nav[3]),
+    ("About", nav[4]),
+    ("Contact", nav[5]),
+]
+
+for name, column in pages:
+
+    with column:
+
+        if st.button(
+            name,
+            key=f"nav_{name}",
+            use_container_width=True
+        ):
+
+            st.session_state.page = name
+
+            st.rerun()
+
+
+# ============================================================
+# CART BUTTON
+# ============================================================
 
 with nav[6]:
+
     if st.button(
         f"🛒 {st.session_state.cart}",
         key="cart_icon",
         use_container_width=True
     ):
+
         if st.session_state.cart > 0:
+
             st.session_state.show_cart = True
+
             st.rerun()
+
         else:
+
             st.info("Your cart is empty.")
 
 
-# =========================================================
-# CHECKOUT DIALOG
-# =========================================================
+# ============================================================
+# DEMO CHECKOUT DIALOG
+# ============================================================
 
 @st.dialog("AERIS CHECKOUT")
 def checkout_dialog():
 
-    # =====================================================
-    # ORDER SUCCESS
-    # =====================================================
+    # ========================================================
+    # ORDER SUCCESS SCREEN
+    # ========================================================
 
     if st.session_state.order_placed:
 
-        st.markdown(
-            """
-            <div style="
-                text-align:center;
-                padding:25px 10px;
-            ">
-
-                <div style="
-                    font-size:55px;
-                    margin-bottom:10px;
-                ">
-                    ✓
-                </div>
-
-                <div style="
-                    color:white;
-                    font-size:26px;
-                    font-weight:600;
-                    margin-bottom:8px;
-                ">
-                    Order Confirmed
-                </div>
-
-                <div style="
-                    color:#8fa39f;
-                    font-size:14px;
-                    line-height:1.6;
-                ">
-                    Thank you for choosing AERIS.<br>
-                    Your AERIS One order has been placed successfully.
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.success(
+            "🎉 Demo Order Placed Successfully!"
         )
 
-        total = 2499 * st.session_state.cart
+        st.markdown("""
+        ### Thank you for choosing AERIS.
+
+        Your demo order has been successfully created.
+
+        **Order Status:** Demo Order  
+        **Payment:** Not charged  
+        **Delivery:** Demo only
+        """)
 
         st.markdown(
             f"""
             <div style="
-                background:#102b30;
-                border:1px solid #28484d;
-                border-radius:12px;
-                padding:18px;
-                margin-top:10px;
+                padding:20px;
+                margin-top:20px;
+                border-radius:16px;
+                background:#071e24;
+                border:1px solid rgba(167,255,223,.18);
             ">
 
                 <div style="
                     color:#8fa39f;
                     font-size:11px;
                     letter-spacing:2px;
-                    text-transform:uppercase;
                 ">
-                    Order Summary
+                    ORDER SUMMARY
                 </div>
 
                 <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    margin-top:14px;
+                    color:white;
+                    font-size:22px;
+                    margin-top:8px;
                 ">
+                    AERIS One × {st.session_state.cart}
+                </div>
 
-                    <div>
-
-                        <div style="
-                            color:white;
-                            font-size:17px;
-                        ">
-                            AERIS One
-                        </div>
-
-                        <div style="
-                            color:#8fa39f;
-                            font-size:12px;
-                            margin-top:4px;
-                        ">
-                            ₹2,499 × {st.session_state.cart}
-                        </div>
-
-                    </div>
-
-                    <div style="
-                        color:white;
-                        font-size:18px;
-                        font-weight:600;
-                    ">
-                        ₹{total:,}
-                    </div>
-
+                <div style="
+                    color:#a7ffdf;
+                    font-size:25px;
+                    margin-top:8px;
+                ">
+                    ₹{st.session_state.cart * 2499:,}
                 </div>
 
             </div>
@@ -530,23 +792,23 @@ def checkout_dialog():
             unsafe_allow_html=True
         )
 
-        st.write("")
-
         if st.button(
             "Close",
             use_container_width=True
         ):
+
             st.session_state.show_cart = False
             st.session_state.order_placed = False
             st.session_state.cart = 0
+
             st.rerun()
 
         return
 
 
-    # =====================================================
+    # ========================================================
     # CHECKOUT HEADER
-    # =====================================================
+    # ========================================================
 
     st.markdown(
         """
@@ -555,7 +817,7 @@ def checkout_dialog():
         ">
 
             <div style="
-                color:#8fa39f;
+                color:#a7ffdf;
                 font-size:11px;
                 letter-spacing:3px;
                 text-transform:uppercase;
@@ -567,7 +829,6 @@ def checkout_dialog():
                 color:white;
                 font-size:30px;
                 margin-top:5px;
-                font-weight:500;
             ">
                 Complete your order
             </div>
@@ -578,20 +839,23 @@ def checkout_dialog():
     )
 
 
-    # =====================================================
-    # PRODUCT SUMMARY
-    # =====================================================
+    # ========================================================
+    # ORDER SUMMARY
+    # ========================================================
 
-    total = 2499 * st.session_state.cart
+    quantity = st.session_state.cart
+
+    total = quantity * 2499
+
 
     st.markdown(
         f"""
         <div style="
-            background:#102b30;
-            border:1px solid #28484d;
-            border-radius:14px;
             padding:18px;
-            margin-bottom:20px;
+            margin-bottom:25px;
+            border-radius:16px;
+            background:#071e24;
+            border:1px solid rgba(167,255,223,.18);
         ">
 
             <div style="
@@ -605,7 +869,6 @@ def checkout_dialog():
                     <div style="
                         color:white;
                         font-size:17px;
-                        font-weight:500;
                     ">
                         AERIS One
                     </div>
@@ -615,15 +878,14 @@ def checkout_dialog():
                         font-size:12px;
                         margin-top:4px;
                     ">
-                        Quantity: {st.session_state.cart}
+                        ₹2,499 × {quantity}
                     </div>
 
                 </div>
 
                 <div style="
-                    color:white;
-                    font-size:18px;
-                    font-weight:600;
+                    color:#a7ffdf;
+                    font-size:24px;
                 ">
                     ₹{total:,}
                 </div>
@@ -636,80 +898,73 @@ def checkout_dialog():
     )
 
 
-    # =====================================================
+    # ========================================================
     # DELIVERY DETAILS
-    # =====================================================
+    # ========================================================
 
     st.markdown(
-        """
-        <div style="
-            color:#8fa39f;
-            font-size:11px;
-            letter-spacing:2px;
-            text-transform:uppercase;
-            margin-bottom:8px;
-        ">
-            Delivery Details
-        </div>
-        """,
-        unsafe_allow_html=True
+        "### Delivery Details"
     )
+
 
     name = st.text_input(
         "Full Name",
-        placeholder="Enter your full name"
+        placeholder="Enter your full name",
+        key="checkout_name"
     )
+
 
     phone = st.text_input(
         "Phone Number",
-        placeholder="10-digit mobile number"
+        placeholder="10-digit mobile number",
+        key="checkout_phone"
     )
+
 
     address = st.text_area(
         "Address",
-        placeholder="House / Flat number, Street, Area",
-        height=90
+        placeholder="House / Flat No., Building, Street",
+        height=90,
+        key="checkout_address"
     )
 
-    col1, col2 = st.columns(2)
 
-    with col1:
+    city_col, state_col = st.columns(2)
+
+
+    with city_col:
+
         city = st.text_input(
             "City",
-            placeholder="Mumbai"
+            placeholder="Mumbai",
+            key="checkout_city"
         )
 
-    with col2:
+
+    with state_col:
+
         state = st.text_input(
             "State",
-            placeholder="Maharashtra"
+            placeholder="Maharashtra",
+            key="checkout_state"
         )
+
 
     pincode = st.text_input(
         "Pincode",
-        placeholder="6-digit pincode"
+        placeholder="6-digit pincode",
+        key="checkout_pincode"
     )
 
 
-    # =====================================================
+    # ========================================================
     # PAYMENT
-    # =====================================================
+    # ========================================================
 
     st.markdown(
-        """
-        <div style="
-            color:#8fa39f;
-            font-size:11px;
-            letter-spacing:2px;
-            text-transform:uppercase;
-            margin-top:15px;
-            margin-bottom:8px;
-        ">
-            Payment Method
-        </div>
-        """,
-        unsafe_allow_html=True
+        "### Payment Method"
     )
+
 
     payment = st.radio(
         "Choose payment method",
@@ -718,409 +973,1006 @@ def checkout_dialog():
             "UPI — Demo",
             "Credit / Debit Card — Demo"
         ],
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="checkout_payment"
     )
 
 
-    # =====================================================
-    # TOTAL
-    # =====================================================
-
-    st.markdown(
-        f"""
-        <div style="
-            border-top:1px solid #28484d;
-            margin-top:20px;
-            padding-top:18px;
-            display:flex;
-            justify-content:space-between;
-        ">
-
-            <div style="
-                color:#8fa39f;
-                font-size:14px;
-            ">
-                Total
-            </div>
-
-            <div style="
-                color:white;
-                font-size:22px;
-                font-weight:600;
-            ">
-                ₹{total:,}
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
+    st.caption(
+        "⚠️ Demo checkout only — no real payment "
+        "will be processed."
     )
 
 
-    # =====================================================
+    # ========================================================
     # PLACE ORDER
-    # =====================================================
-
-    st.write("")
+    # ========================================================
 
     if st.button(
         "Place Demo Order →",
-        use_container_width=True,
-        type="primary"
+        key="place_demo_order",
+        type="primary",
+        use_container_width=True
     ):
 
-        if not name.strip():
-            st.error("Please enter your name.")
-
-        elif not phone.isdigit() or len(phone) != 10:
-            st.error("Please enter a valid 10-digit phone number.")
-
-        elif not address.strip():
-            st.error("Please enter your address.")
-
-        elif not city.strip():
-            st.error("Please enter your city.")
-
-        elif not state.strip():
-            st.error("Please enter your state.")
-
-        elif not pincode.isdigit() or len(pincode) != 6:
-            st.error("Please enter a valid 6-digit pincode.")
-
-        else:
-            st.session_state.order_placed = True
-            st.rerun()
+        clean_name = name.strip()
+        clean_phone = phone.strip()
+        clean_address = address.strip()
+        clean_city = city.strip()
+        clean_state = state.strip()
+        clean_pincode = pincode.strip()
 
 
-# =========================================================
-# OPEN CART
-# =========================================================
+        # NAME VALIDATION
+
+        if not clean_name:
+
+            st.error(
+                "Please enter your full name."
+            )
+
+            return
+
+
+        # PHONE VALIDATION
+
+        if (
+            not clean_phone.isdigit()
+            or len(clean_phone) != 10
+        ):
+
+            st.error(
+                "Please enter a valid 10-digit phone number."
+            )
+
+            return
+
+
+        # ADDRESS VALIDATION
+
+        if not clean_address:
+
+            st.error(
+                "Please enter your delivery address."
+            )
+
+            return
+
+
+        # CITY VALIDATION
+
+        if not clean_city:
+
+            st.error(
+                "Please enter your city."
+            )
+
+            return
+
+
+        # STATE VALIDATION
+
+        if not clean_state:
+
+            st.error(
+                "Please enter your state."
+            )
+
+            return
+
+
+        # PINCODE VALIDATION
+
+        if (
+            not clean_pincode.isdigit()
+            or len(clean_pincode) != 6
+        ):
+
+            st.error(
+                "Please enter a valid 6-digit pincode."
+            )
+
+            return
+
+
+        # ORDER SUCCESS
+
+        st.session_state.order_placed = True
+
+        st.rerun()
+
+
+# ============================================================
+# OPEN CHECKOUT
+# ============================================================
 
 if st.session_state.show_cart:
+
     checkout_dialog()
 
 
-# =========================================================
-# HOME PAGE
-# =========================================================
+# ============================================================
+# HOME
+# ============================================================
 
-if st.session_state.page == "Home":
+def home():
 
-    hero_left, hero_right = st.columns(
-        [1.05, 0.95],
-        gap="large"
-    )
+    # ========================================================
+    # HERO
+    # ========================================================
 
-    with hero_left:
+    html("""
+    <div class="hero">
 
-        st.markdown(
-            """
-            <div class="hero-small">
-                The future of hydration
+        <div class="hero-content">
+
+            <div class="eyebrow">
+                SMART HYDRATION • MODERN LIFESTYLE
             </div>
 
             <div class="hero-title">
-                Smart hydration.<br>
-                Simplified.
+                Drink Smart.<br>
+                Live Better.
             </div>
 
             <div class="hero-text">
-                Meet AERIS One — a smart hydration companion
-                designed to make every sip count. Intelligent
-                reminders, temperature awareness and a refined
-                everyday design, all in one bottle.
+                A smart, reusable hydration companion
+                for modern lifestyles.
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-        st.write("")
+            <div class="hero-button">
+                Shop Now&nbsp;&nbsp; →
+            </div>
 
-        if st.button(
-            "Explore AERIS One →",
-            key="hero_shop",
-            type="primary"
-        ):
-            st.session_state.page = "Shop"
-            st.rerun()
+            <div class="hero-features">
 
-    with hero_right:
+                <span>
+                    ♧ Smart
+                </span>
 
-        st.image(
-            image_path("3.jpeg"),
-            use_container_width=True
-        )
+                <span>
+                    ⌁ Stylish
+                </span>
+
+                <span>
+                    ◉ Sustainable
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+    """)
 
 
-    # =====================================================
-    # PRODUCT INFORMATION
-    # =====================================================
+    # ========================================================
+    # PRODUCT
+    # ========================================================
 
-    st.write("")
-    st.write("")
+    html("""
+    <div class="section">
+
+        <div class="eyebrow">
+            01 — THE PRODUCT
+        </div>
+
+    </div>
+    """)
+
 
     left, right = st.columns(
-        [0.95, 1.05],
+        [1, 1.35],
         gap="large"
     )
 
+
+    # ========================================================
+    # PRODUCT INFORMATION
+    # ========================================================
+
     with left:
 
-        st.image(
-            image_path("3.jpeg"),
-            use_container_width=True
-        )
+        html("""
+        <div>
 
-    with right:
-
-        st.markdown(
-            """
-            <div class="product-label">
+            <div class="eyebrow">
                 AERIS ONE • SMART HYDRATION
             </div>
 
-            <div class="product-name">
+            <div class="title">
                 More than a bottle.
             </div>
 
-            <div class="product-description">
-                AERIS One is designed as your everyday smart
-                hydration companion. Stay aware of your water,
-                temperature and daily hydration habits without
-                compromising on style.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+            <div class="text">
 
-        st.write("")
+                AERIS One is a smart hydration companion
+                designed to make staying hydrated easier,
+                smarter and more natural throughout your day.
 
-        stat1, stat2, stat3, stat4 = st.columns(4)
-
-        with stat1:
-            st.markdown(
-                """
-                <div class="info-card">
-                    <div class="info-number">25°C</div>
-                    <div class="info-title">Temperature</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with stat2:
-            st.markdown(
-                """
-                <div class="info-card">
-                    <div class="info-number">SMART</div>
-                    <div class="info-title">Technology</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with stat3:
-            st.markdown(
-                """
-                <div class="info-card">
-                    <div class="info-number">24H</div>
-                    <div class="info-title">Insulation</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with stat4:
-            st.markdown(
-                """
-                <div class="info-card">
-                    <div class="info-number">01</div>
-                    <div class="info-title">Bottle</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        st.write("")
-
-        st.markdown(
-            """
-            <div class="product-description">
-
-            ✓ Smart Hydration Reminders<br><br>
-
-            ✓ Live Temperature Display<br><br>
-
-            ✓ Insulated Construction<br><br>
-
-            ✓ Built for Everyday Life
+                Combining a premium reusable design with
+                intelligent hydration cues and live temperature
+                indication, AERIS brings technology into one
+                of the simplest parts of your daily routine.
 
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-        st.write("")
 
-        price_col, button_col = st.columns(
-            [1, 1]
-        )
+            <!-- QUICK STATS -->
 
-        with price_col:
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(2, minmax(120px, 1fr));
+                gap:12px;
+                margin-top:30px;
+                margin-bottom:28px;
+            ">
 
-            st.markdown(
-                """
-                <div class="price">
-                    ₹2,499
-                </div>
 
                 <div style="
-                    color:#8fa39f;
-                    font-size:11px;
-                    margin-top:3px;
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
                 ">
-                    AERIS One
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 
-        with button_col:
-
-            if st.button(
-                "🛒 Add AERIS One to Cart",
-                key="home_cart",
-                use_container_width=True
-            ):
-                st.session_state.cart += 1
-                st.success("AERIS One added to cart.")
-
-
-    # =====================================================
-    # LIFESTYLE
-    # =====================================================
-
-    st.write("")
-    st.write("")
-    st.write("")
-
-    st.markdown(
-        """
-        <div class="section-label">
-            Designed for your day
-        </div>
-
-        <div class="section-title">
-            Wherever life takes you.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    life1, life2, life3, life4 = st.columns(4)
-
-    lifestyle_data = [
-        ("🎓", "COLLEGE", "Stay hydrated through long classes and busy schedules."),
-        ("💼", "OFFICE", "A refined companion for your everyday workspace."),
-        ("🏋️", "GYM", "Keep hydration close through every workout."),
-        ("✈️", "TRAVEL", "Designed to move with you wherever you go.")
-    ]
-
-    for col, data in zip(
-        [life1, life2, life3, life4],
-        lifestyle_data
-    ):
-
-        with col:
-
-            st.markdown(
-                f"""
-                <div class="feature-card">
-
-                    <div class="feature-icon">
-                        {data[0]}
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        25°C
                     </div>
 
-                    <div class="feature-title">
-                        {data[1]}
-                    </div>
-
-                    <div class="feature-text">
-                        {data[2]}
+                    <div style="
+                        color:#8fa39f;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
+                    ">
+                        LIVE TEMPERATURE
                     </div>
 
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
 
 
-# =========================================================
-# SHOP PAGE
-# =========================================================
+                <div style="
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
+                ">
 
-elif st.session_state.page == "Shop":
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        SMART
+                    </div>
 
-    st.markdown(
-        """
-        <div class="section-label">
-            AERIS COLLECTION
+                    <div style="
+                        color:#8fa39f;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
+                    ">
+                        HYDRATION CUES
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
+                ">
+
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        INSULATED
+                    </div>
+
+                    <div style="
+                        color:#8fa39f;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
+                    ">
+                        TEMPERATURE RETENTION
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    padding:18px;
+                    border:1px solid rgba(167,255,223,.16);
+                    border-radius:14px;
+                    background:rgba(7,30,36,.55);
+                ">
+
+                    <div style="
+                        color:#a7ffdf;
+                        font-size:24px;
+                        font-weight:500;
+                    ">
+                        REUSABLE
+                    </div>
+
+                    <div style="
+                        color:#8fa39f;
+                        font-size:10px;
+                        letter-spacing:1.5px;
+                        margin-top:6px;
+                    ">
+                        EVERYDAY DESIGN
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FEATURES -->
+
+            <div style="
+                color:white;
+                font-size:18px;
+                margin-bottom:15px;
+            ">
+                Designed around you.
+            </div>
+
+
+            <div style="
+                display:flex;
+                flex-direction:column;
+                gap:13px;
+                margin-bottom:25px;
+            ">
+
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Smart Hydration Reminders
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Subtle cues help encourage regular
+                            hydration throughout your day.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Live Temperature Display
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Check your drink temperature
+                            at a glance.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Insulated Construction
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Designed to help maintain your
+                            drink's temperature for longer.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:12px;
+                ">
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:17px;
+                    ">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:14px;
+                            margin-bottom:3px;
+                        ">
+                            Built for Everyday Life
+                        </div>
+
+                        <div style="
+                            color:#8fa39f;
+                            font-size:12px;
+                            line-height:1.5;
+                        ">
+                            Designed for college, office,
+                            gym and travel.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRODUCT DETAILS -->
+
+            <div style="
+                padding-top:20px;
+                border-top:1px solid rgba(255,255,255,.08);
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-bottom:12px;
+                ">
+
+                    <span style="
+                        color:#8fa39f;
+                        font-size:12px;
+                        letter-spacing:1px;
+                    ">
+                        AERIS ONE
+                    </span>
+
+                    <span style="
+                        color:#a7ffdf;
+                        font-size:12px;
+                    ">
+                        PREMIUM EDITION
+                    </span>
+
+                </div>
+
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    gap:20px;
+                ">
+
+                    <div>
+
+                        <div style="
+                            color:white;
+                            font-size:32px;
+                            font-weight:400;
+                        ">
+                            ₹2,499
+                        </div>
+
+                        <div style="
+                            color:#7f918d;
+                            font-size:11px;
+                            margin-top:4px;
+                        ">
+                            Smart hydration. Everyday simplicity.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LIFESTYLE -->
+
+            <div style="
+                margin-top:22px;
+                color:#8fa39f;
+                font-size:12px;
+                line-height:1.6;
+            ">
+
+                <span style="color:#a7ffdf;">
+                    College
+                </span>
+                &nbsp;•&nbsp;
+
+                <span style="color:#a7ffdf;">
+                    Office
+                </span>
+                &nbsp;•&nbsp;
+
+                <span style="color:#a7ffdf;">
+                    Gym
+                </span>
+                &nbsp;•&nbsp;
+
+                <span style="color:#a7ffdf;">
+                    Travel
+                </span>
+
+            </div>
+
         </div>
+        """)
 
-        <div class="section-title">
-            Choose your AERIS.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
-    left, right = st.columns(
-        [1, 1],
-        gap="large"
-    )
+        if st.button(
+            "Explore Features →",
+            key="explore",
+            use_container_width=True
+        ):
 
-    with left:
+            st.session_state.page = "Features"
+
+            st.rerun()
+
+
+    # ========================================================
+    # PRODUCT IMAGE
+    # ========================================================
+
+    with right:
 
         st.image(
             image_path("3.jpeg"),
             use_container_width=True
         )
 
-    with right:
 
-        st.markdown(
-            """
-            <div class="product-label">
+    # ========================================================
+    # ADD TO CART
+    # ========================================================
+
+    st.write("")
+
+    cart_col1, cart_col2, cart_col3 = st.columns(
+        [1, 1, 1]
+    )
+
+    with cart_col2:
+
+        if st.button(
+            "🛒 Add AERIS One to Cart",
+            key="home_add_cart",
+            use_container_width=True
+        ):
+
+            st.session_state.cart += 1
+
+            st.success(
+                "AERIS One added to your cart!"
+            )
+
+
+    # ========================================================
+    # FEATURES
+    # ========================================================
+
+    html("""
+    <div class="section">
+
+        <div class="eyebrow">
+            SMART BY DESIGN
+        </div>
+
+        <div class="title">
+            Built around your day.
+        </div>
+
+    </div>
+    """)
+
+
+    feature_data = [
+
+        (
+            "◌",
+            "Smart Reminders",
+            "LED indicator encourages regular hydration."
+        ),
+
+        (
+            "◉",
+            "Insulated",
+            "Temperature-retaining, leak-proof design."
+        ),
+
+        (
+            "♧",
+            "Sustainable",
+            "Reusable alternative to disposable bottles."
+        ),
+
+        (
+            "⌂",
+            "Lifestyle Design",
+            "Made for college, office, gym and travel."
+        ),
+
+    ]
+
+
+    feature_cols = st.columns(
+        4,
+        gap="medium"
+    )
+
+
+    for col, data in zip(
+        feature_cols,
+        feature_data
+    ):
+
+        icon, title, description = data
+
+        with col:
+
+            html(f"""
+            <div class="card">
+
+                <div class="icon">
+                    {icon}
+                </div>
+
+                <div class="card-title">
+                    {title}
+                </div>
+
+                <div class="card-text">
+                    {description}
+                </div>
+
+            </div>
+            """)
+
+
+    # ========================================================
+    # SEGMENTATION
+    # ========================================================
+
+    html("""
+    <div class="light-section">
+
+        <div class="eyebrow">
+            02 — MARKET SEGMENTATION
+        </div>
+
+        <div class="title">
+            Who are we targeting?
+        </div>
+
+        <div class="text">
+            Four layers of segmentation create a focused audience.
+        </div>
+
+    </div>
+    """)
+
+
+    segments = [
+
+        (
+            "Demographic",
+            "18–30 years • Students + young professionals • Moderate–high buying power"
+        ),
+
+        (
+            "Geographic",
+            "Mumbai • Navi Mumbai • Pune • Bengaluru • Delhi NCR • Hyderabad • Chennai"
+        ),
+
+        (
+            "Psychographic",
+            "Health & wellness • Digital-first • Eco-conscious • Design driven"
+        ),
+
+        (
+            "Behavioural",
+            "Online shoppers • Fitness viewers • Lifestyle-product buyers"
+        ),
+
+    ]
+
+
+    left, right = st.columns(
+        2,
+        gap="medium"
+    )
+
+
+    for i, data in enumerate(segments):
+
+        title, description = data
+
+        target = left if i % 2 == 0 else right
+
+        with target:
+
+            html(f"""
+            <div class="segment">
+
+                <div class="segment-title">
+                    {title}
+                </div>
+
+                <div class="segment-text">
+                    {description}
+                </div>
+
+            </div>
+            """)
+
+
+    # ========================================================
+    # FUNNEL
+    # ========================================================
+
+    html("""
+    <div class="section">
+
+        <div class="eyebrow">
+            03 — CAMPAIGN FUNNEL
+        </div>
+
+        <div class="title">
+            From awareness to advocacy
+        </div>
+
+        <div class="text">
+            Every stage has a clear objective,
+            content format and CTA.
+        </div>
+
+    </div>
+    """)
+
+
+    funnel = [
+
+        (
+            "01",
+            "AWARENESS",
+            "Reels • Shorts • Influencers"
+        ),
+
+        (
+            "02",
+            "INTEREST",
+            "Carousels • Stories • Tips"
+        ),
+
+        (
+            "03",
+            "CONSIDERATION",
+            "Reviews • Demos • FAQs"
+        ),
+
+        (
+            "04",
+            "CONVERSION",
+            "Search • Retargeting • Offer"
+        ),
+
+        (
+            "05",
+            "RETENTION",
+            "UGC • Reviews • Referrals"
+        ),
+
+    ]
+
+
+    html('<div class="funnel">')
+
+    for number, title, description in funnel:
+
+        html(f"""
+        <div class="funnel-item">
+
+            <div class="funnel-number">
+                {number}
+            </div>
+
+            <div class="funnel-title">
+                {title}
+            </div>
+
+            <div class="funnel-text">
+                {description}
+            </div>
+
+        </div>
+        """)
+
+    html("</div>")
+
+
+    st.write("")
+
+
+    # ========================================================
+    # IMAGE STRIP
+    # ========================================================
+
+    image1, image2 = st.columns(
+        2,
+        gap="medium"
+    )
+
+
+    with image1:
+
+        st.image(
+            image_path("2.jpeg"),
+            use_container_width=True
+        )
+
+
+    with image2:
+
+        st.image(
+            image_path("6.jpeg"),
+            use_container_width=True
+        )
+
+
+# ============================================================
+# SHOP
+# ============================================================
+
+def shop():
+
+    html("""
+    <div class="section">
+
+        <div class="eyebrow">
+            AERIS SMART BOTTLE
+        </div>
+
+        <div class="title">
+            Meet AERIS One.
+        </div>
+
+    </div>
+    """)
+
+
+    image_col, product_col = st.columns(
+        [1.2, 1],
+        gap="large"
+    )
+
+
+    with image_col:
+
+        st.image(
+            image_path("3.jpeg"),
+            use_container_width=True
+        )
+
+
+    with product_col:
+
+        html("""
+        <div class="shop-box">
+
+            <div class="eyebrow">
                 AERIS ONE
             </div>
 
-            <div class="product-name">
-                Smart Hydration Bottle
+            <div class="title">
+                Smart hydration.
             </div>
 
-            <div class="product-description">
-                Intelligent hydration meets modern everyday
-                design. Built for college, work, gym and travel.
+            <div class="text">
+
+                A premium smart hydration companion
+                with temperature indication,
+                reminder lighting and an insulated
+                leak-proof design.
+
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-        st.write("")
-
-        st.markdown(
-            """
             <div class="price">
                 ₹2,499
             </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-        st.write("")
+        </div>
+        """)
 
-        finish = st.selectbox(
-            "Finish",
+
+        color = st.selectbox(
+            "Choose your finish",
             [
                 "Obsidian Black",
                 "Lavender",
@@ -1128,30 +1980,33 @@ elif st.session_state.page == "Shop":
             ]
         )
 
+
         quantity = st.number_input(
             "Quantity",
             min_value=1,
             max_value=10,
-            value=1,
-            step=1
+            value=1
         )
 
-        st.write("")
 
         if st.button(
             "Add to Cart",
-            key="shop_add",
-            use_container_width=True,
-            type="primary"
+            key="cart_button",
+            use_container_width=True
         ):
 
-            st.session_state.cart += quantity
+            st.session_state.cart += int(quantity)
 
             st.success(
-                f"{quantity} × AERIS One added to cart."
+                f"Added {quantity} × AERIS One "
+                f"({color}) to your cart."
             )
 
-        st.write("")
+
+        st.caption(
+            f"Cart: {st.session_state.cart} item(s)"
+        )
+
 
         if st.session_state.cart > 0:
 
@@ -1162,178 +2017,191 @@ elif st.session_state.page == "Shop":
             ):
 
                 st.session_state.show_cart = True
+
                 st.rerun()
 
 
-# =========================================================
-# FEATURES PAGE
-# =========================================================
+    html("""
+    <div class="section">
 
-elif st.session_state.page == "Features":
-
-    st.markdown(
-        """
-        <div class="section-label">
-            Technology
+        <div class="title">
+            Your Everyday Companion
         </div>
 
-        <div class="section-title">
-            Built around better hydration.
-        </div>
-
-        <div class="hero-text">
-            AERIS One combines smart functionality with
-            an understated everyday design.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.write("")
-    st.write("")
-
-    f1, f2 = st.columns(2)
-
-    with f1:
-
-        st.markdown(
-            """
-            <div class="feature-card">
-
-                <div class="feature-icon">
-                    💧
-                </div>
-
-                <div class="feature-title">
-                    Smart Hydration Reminders
-                </div>
-
-                <div class="feature-text">
-                    Stay aware of your hydration throughout
-                    the day with intelligent reminders.
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with f2:
-
-        st.markdown(
-            """
-            <div class="feature-card">
-
-                <div class="feature-icon">
-                    🌡️
-                </div>
-
-                <div class="feature-title">
-                    Temperature Awareness
-                </div>
-
-                <div class="feature-text">
-                    Keep track of your drink temperature
-                    with integrated temperature information.
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.write("")
-
-    f3, f4 = st.columns(2)
-
-    with f3:
-
-        st.markdown(
-            """
-            <div class="feature-card">
-
-                <div class="feature-icon">
-                    ❄️
-                </div>
-
-                <div class="feature-title">
-                    Insulated Design
-                </div>
-
-                <div class="feature-text">
-                    Designed to help maintain your drink's
-                    temperature throughout the day.
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with f4:
-
-        st.markdown(
-            """
-            <div class="feature-card">
-
-                <div class="feature-icon">
-                    ♻️
-                </div>
-
-                <div class="feature-title">
-                    Reusable
-                </div>
-
-                <div class="feature-text">
-                    A reusable everyday bottle designed
-                    for modern routines.
-                </div>
-
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    </div>
+    """)
 
 
-# =========================================================
-# ABOUT PAGE
-# =========================================================
-
-elif st.session_state.page == "About":
-
-    left, right = st.columns(
-        [1, 1],
+    image_col, text_col = st.columns(
+        2,
         gap="large"
     )
 
-    with left:
 
-        st.markdown(
-            """
-            <div class="section-label">
-                About AERIS
-            </div>
+    with image_col:
 
-            <div class="section-title">
-                Hydration,
-                reimagined.
-            </div>
-
-            <div class="hero-text">
-                AERIS was created around a simple idea:
-                hydration should fit naturally into modern life.
-
-                <br><br>
-
-                AERIS One brings together thoughtful design,
-                smart technology and everyday usability in
-                one minimal product.
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.image(
+            image_path("2.jpeg"),
+            use_container_width=True
         )
 
-    with right:
+
+    with text_col:
+
+        html("""
+        <div class="card">
+
+            <div class="eyebrow">
+                DESIGNED FOR REAL LIFE
+            </div>
+
+            <div class="card-title">
+                College · Office · Gym · Travel
+            </div>
+
+            <div class="card-text">
+
+                AERIS is built to move with you,
+                from your first class to your last workout.
+
+            </div>
+
+            <div style="
+                color:#a7ffdf;
+                font-size:34px;
+                margin-top:25px;
+            ">
+                25°C
+            </div>
+
+            <div class="card-text">
+
+                Live temperature indicator
+                and smart hydration cues.
+
+            </div>
+
+        </div>
+        """)
+
+
+# ============================================================
+# FEATURES
+# ============================================================
+
+def features_page():
+
+    html("""
+    <div class="section">
+
+        <div class="eyebrow">
+            AERIS TECHNOLOGY
+        </div>
+
+        <div class="title">
+            Smart details. Simple experience.
+        </div>
+
+        <div class="text">
+
+            Everything about AERIS is designed
+            to make hydration simpler without
+            adding unnecessary complexity.
+
+        </div>
+
+    </div>
+    """)
+
+
+    image_col, feature_col = st.columns(
+        [1.1, 1],
+        gap="large"
+    )
+
+
+    with image_col:
+
+        st.image(
+            image_path("6.jpeg"),
+            use_container_width=True
+        )
+
+
+    with feature_col:
+
+        features = [
+
+            (
+                "01",
+                "Temperature Indicator",
+                "A clear temperature readout gives you an at-a-glance view of your drink."
+            ),
+
+            (
+                "02",
+                "Smart Cap",
+                "One-touch opening with a leak-resistant everyday design."
+            ),
+
+            (
+                "03",
+                "Hydration Reminder",
+                "A subtle LED cue helps make drinking water part of your routine."
+            ),
+
+            (
+                "04",
+                "Insulated Body",
+                "Designed to retain temperature while staying comfortable to carry."
+            ),
+
+        ]
+
+
+        for number, title, description in features:
+
+            html(f"""
+            <div class="card" style="margin-bottom:15px;">
+
+                <div style="
+                    color:#a7ffdf;
+                    font-size:30px;
+                ">
+                    {number}
+                </div>
+
+                <div class="card-title">
+                    {title}
+                </div>
+
+                <div class="card-text">
+                    {description}
+                </div>
+
+            </div>
+            """)
+
+
+    st.image(
+        image_path("7.jpeg"),
+        use_container_width=True
+    )
+
+
+# ============================================================
+# ABOUT
+# ============================================================
+
+def about():
+
+    image_col, text_col = st.columns(
+        2,
+        gap="large"
+    )
+
+
+    with image_col:
 
         st.image(
             image_path("5.jpeg"),
@@ -1341,83 +2209,235 @@ elif st.session_state.page == "About":
         )
 
 
-# =========================================================
-# CONTACT PAGE
-# =========================================================
+    with text_col:
 
-elif st.session_state.page == "Contact":
+        html("""
+        <div class="section">
 
-    st.markdown(
-        """
-        <div class="section-label">
-            Get in touch
+            <div class="eyebrow">
+                OUR STORY
+            </div>
+
+            <div class="title">
+                Small habits.<br>
+                Big changes.
+            </div>
+
+            <div class="text">
+
+                AERIS is built around a simple idea:
+                better hydration should fit naturally
+                into modern life.
+
+            </div>
+
+            <br>
+
+            <div class="text">
+
+                The product combines a reusable bottle
+                with smart cues and a clean,
+                lifestyle-first design.
+
+            </div>
+
+        </div>
+        """)
+
+
+    html("""
+    <div class="light-section">
+
+        <div class="eyebrow">
+            OUR POSITIONING
         </div>
 
-        <div class="section-title">
-            Let's talk.
+        <div class="title">
+            Health. Design. Sustainability.
         </div>
 
-        <div class="hero-text">
-            Have a question about AERIS One?
-            Send us a message.
+    </div>
+    """)
+
+
+    values = [
+
+        (
+            "Health",
+            "Encourages consistent hydration and makes the habit more visible."
+        ),
+
+        (
+            "Design",
+            "A minimal premium form designed for modern routines."
+        ),
+
+        (
+            "Sustainability",
+            "A reusable alternative to single-use plastic bottles."
+        ),
+
+    ]
+
+
+    cols = st.columns(3)
+
+
+    for col, (title, description) in zip(
+        cols,
+        values
+    ):
+
+        with col:
+
+            html(f"""
+            <div class="segment">
+
+                <div class="segment-title">
+                    {title}
+                </div>
+
+                <div class="segment-text">
+                    {description}
+                </div>
+
+            </div>
+            """)
+
+
+# ============================================================
+# CONTACT
+# ============================================================
+
+def contact():
+
+    html("""
+    <div class="section">
+
+        <div class="eyebrow">
+            GET IN TOUCH
         </div>
-        """,
-        unsafe_allow_html=True
+
+        <div class="title">
+            Contact AERIS
+        </div>
+
+    </div>
+    """)
+
+
+    form_col, info_col = st.columns(
+        2,
+        gap="large"
     )
 
-    st.write("")
-    st.write("")
 
-    col1, col2 = st.columns(2)
+    with form_col:
 
-    with col1:
+        name = st.text_input("Name")
 
-        name = st.text_input(
-            "Name",
-            placeholder="Your name"
-        )
-
-        email = st.text_input(
-            "Email",
-            placeholder="you@example.com"
-        )
-
-    with col2:
+        email = st.text_input("Email")
 
         message = st.text_area(
             "Message",
-            placeholder="How can we help?",
-            height=125
+            height=160
         )
 
-    st.write("")
 
-    if st.button(
-        "Send Message →",
-        type="primary"
-    ):
+        if st.button(
+            "Send Message",
+            use_container_width=True
+        ):
 
-        if name and email and message:
-            st.success(
-                "Thank you! Your message has been received."
-            )
-        else:
-            st.warning(
-                "Please fill in all fields."
-            )
+            if (
+                name.strip()
+                and email.strip()
+                and message.strip()
+            ):
+
+                st.success(
+                    "Thanks! Your message has been received."
+                )
+
+            else:
+
+                st.warning(
+                    "Please complete all fields."
+                )
 
 
-# =========================================================
+    with info_col:
+
+        html("""
+        <div class="card">
+
+            <div class="eyebrow">
+                AERIS SUPPORT
+            </div>
+
+            <div class="card-title">
+                Questions about the bottle?
+            </div>
+
+            <div class="card-text">
+
+                Email: hello@aeris.example
+
+                <br><br>
+
+                Hours:
+                Monday–Saturday,
+                10:00–18:00
+
+            </div>
+
+        </div>
+        """)
+
+
+# ============================================================
+# ROUTING
+# ============================================================
+
+if st.session_state.page == "Home":
+
+    home()
+
+elif st.session_state.page == "Shop":
+
+    shop()
+
+elif st.session_state.page == "Features":
+
+    features_page()
+
+elif st.session_state.page == "About":
+
+    about()
+
+elif st.session_state.page == "Contact":
+
+    contact()
+
+
+# ============================================================
 # FOOTER
-# =========================================================
+# ============================================================
 
-st.markdown(
-    """
-    <div class="footer">
-        AERIS • SMART HYDRATION
-        <br><br>
-        Designed for better everyday hydration.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+html("""
+<div class="footer">
+
+    <span class="footer-logo">
+        AERIS
+    </span>
+
+    <span style="margin-left:25px;">
+        Drink Smart. Live Better.
+    </span>
+
+    <span style="float:right;">
+        © 2025 AERIS. All rights reserved.
+    </span>
+
+</div>
+""")
