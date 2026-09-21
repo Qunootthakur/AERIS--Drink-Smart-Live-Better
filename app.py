@@ -1,5 +1,6 @@
 import streamlit as st
 from pathlib import Path
+import base64
 
 # ============================================================
 # AERIS WEBSITE
@@ -43,6 +44,12 @@ if "page" not in st.session_state:
 
 if "cart" not in st.session_state:
     st.session_state.cart = 0
+
+if "show_cart" not in st.session_state:
+    st.session_state.show_cart = False
+
+if "order_placed" not in st.session_state:
+    st.session_state.order_placed = False
 
 
 # ============================================================
@@ -612,9 +619,8 @@ hero_image_path = image_path("1.jpeg")
 hero_image = ""
 
 try:
-    hero_bytes = Path(hero_image_path).read_bytes()
 
-    import base64
+    hero_bytes = Path(hero_image_path).read_bytes()
 
     hero_encoded = base64.b64encode(
         hero_bytes
@@ -625,6 +631,7 @@ try:
     )
 
 except Exception:
+
     hero_image = ""
 
 
@@ -696,18 +703,392 @@ for name, column in pages:
             st.rerun()
 
 
+# ============================================================
+# CART BUTTON
+# ============================================================
+
 with nav[6]:
 
-    html(f"""
-    <div style="
-        text-align:center;
-        color:#a7ffdf;
-        padding-top:10px;
-        font-size:14px;
-    ">
-        🛒 {st.session_state.cart}
-    </div>
-    """)
+    if st.button(
+        f"🛒 {st.session_state.cart}",
+        key="cart_icon",
+        use_container_width=True
+    ):
+
+        if st.session_state.cart > 0:
+
+            st.session_state.show_cart = True
+
+            st.rerun()
+
+        else:
+
+            st.info("Your cart is empty.")
+
+
+# ============================================================
+# DEMO CHECKOUT DIALOG
+# ============================================================
+
+@st.dialog("AERIS CHECKOUT")
+def checkout_dialog():
+
+    # ========================================================
+    # ORDER SUCCESS SCREEN
+    # ========================================================
+
+    if st.session_state.order_placed:
+
+        st.success(
+            "🎉 Demo Order Placed Successfully!"
+        )
+
+        st.markdown("""
+        ### Thank you for choosing AERIS.
+
+        Your demo order has been successfully created.
+
+        **Order Status:** Demo Order  
+        **Payment:** Not charged  
+        **Delivery:** Demo only
+        """)
+
+        st.markdown(
+            f"""
+            <div style="
+                padding:20px;
+                margin-top:20px;
+                border-radius:16px;
+                background:#071e24;
+                border:1px solid rgba(167,255,223,.18);
+            ">
+
+                <div style="
+                    color:#8fa39f;
+                    font-size:11px;
+                    letter-spacing:2px;
+                ">
+                    ORDER SUMMARY
+                </div>
+
+                <div style="
+                    color:white;
+                    font-size:22px;
+                    margin-top:8px;
+                ">
+                    AERIS One × {st.session_state.cart}
+                </div>
+
+                <div style="
+                    color:#a7ffdf;
+                    font-size:25px;
+                    margin-top:8px;
+                ">
+                    ₹{st.session_state.cart * 2499:,}
+                </div>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        if st.button(
+            "Close",
+            use_container_width=True
+        ):
+
+            st.session_state.show_cart = False
+            st.session_state.order_placed = False
+            st.session_state.cart = 0
+
+            st.rerun()
+
+        return
+
+
+    # ========================================================
+    # CHECKOUT HEADER
+    # ========================================================
+
+    st.markdown(
+        """
+        <div style="
+            margin-bottom:20px;
+        ">
+
+            <div style="
+                color:#a7ffdf;
+                font-size:11px;
+                letter-spacing:3px;
+                text-transform:uppercase;
+            ">
+                AERIS ONE
+            </div>
+
+            <div style="
+                color:white;
+                font-size:30px;
+                margin-top:5px;
+            ">
+                Complete your order
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+    # ========================================================
+    # ORDER SUMMARY
+    # ========================================================
+
+    quantity = st.session_state.cart
+
+    total = quantity * 2499
+
+
+    st.markdown(
+        f"""
+        <div style="
+            padding:18px;
+            margin-bottom:25px;
+            border-radius:16px;
+            background:#071e24;
+            border:1px solid rgba(167,255,223,.18);
+        ">
+
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+            ">
+
+                <div>
+
+                    <div style="
+                        color:white;
+                        font-size:17px;
+                    ">
+                        AERIS One
+                    </div>
+
+                    <div style="
+                        color:#8fa39f;
+                        font-size:12px;
+                        margin-top:4px;
+                    ">
+                        ₹2,499 × {quantity}
+                    </div>
+
+                </div>
+
+                <div style="
+                    color:#a7ffdf;
+                    font-size:24px;
+                ">
+                    ₹{total:,}
+                </div>
+
+            </div>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+    # ========================================================
+    # DELIVERY DETAILS
+    # ========================================================
+
+    st.markdown(
+        "### Delivery Details"
+    )
+
+
+    name = st.text_input(
+        "Full Name",
+        placeholder="Enter your full name",
+        key="checkout_name"
+    )
+
+
+    phone = st.text_input(
+        "Phone Number",
+        placeholder="10-digit mobile number",
+        key="checkout_phone"
+    )
+
+
+    address = st.text_area(
+        "Address",
+        placeholder="House / Flat No., Building, Street",
+        height=90,
+        key="checkout_address"
+    )
+
+
+    city_col, state_col = st.columns(2)
+
+
+    with city_col:
+
+        city = st.text_input(
+            "City",
+            placeholder="Mumbai",
+            key="checkout_city"
+        )
+
+
+    with state_col:
+
+        state = st.text_input(
+            "State",
+            placeholder="Maharashtra",
+            key="checkout_state"
+        )
+
+
+    pincode = st.text_input(
+        "Pincode",
+        placeholder="6-digit pincode",
+        key="checkout_pincode"
+    )
+
+
+    # ========================================================
+    # PAYMENT
+    # ========================================================
+
+    st.markdown(
+        "### Payment Method"
+    )
+
+
+    payment = st.radio(
+        "Choose payment method",
+        [
+            "Cash on Delivery",
+            "UPI — Demo",
+            "Credit / Debit Card — Demo"
+        ],
+        label_visibility="collapsed",
+        key="checkout_payment"
+    )
+
+
+    st.caption(
+        "⚠️ Demo checkout only — no real payment "
+        "will be processed."
+    )
+
+
+    # ========================================================
+    # PLACE ORDER
+    # ========================================================
+
+    if st.button(
+        "Place Demo Order →",
+        key="place_demo_order",
+        type="primary",
+        use_container_width=True
+    ):
+
+        clean_name = name.strip()
+        clean_phone = phone.strip()
+        clean_address = address.strip()
+        clean_city = city.strip()
+        clean_state = state.strip()
+        clean_pincode = pincode.strip()
+
+
+        # NAME VALIDATION
+
+        if not clean_name:
+
+            st.error(
+                "Please enter your full name."
+            )
+
+            return
+
+
+        # PHONE VALIDATION
+
+        if (
+            not clean_phone.isdigit()
+            or len(clean_phone) != 10
+        ):
+
+            st.error(
+                "Please enter a valid 10-digit phone number."
+            )
+
+            return
+
+
+        # ADDRESS VALIDATION
+
+        if not clean_address:
+
+            st.error(
+                "Please enter your delivery address."
+            )
+
+            return
+
+
+        # CITY VALIDATION
+
+        if not clean_city:
+
+            st.error(
+                "Please enter your city."
+            )
+
+            return
+
+
+        # STATE VALIDATION
+
+        if not clean_state:
+
+            st.error(
+                "Please enter your state."
+            )
+
+            return
+
+
+        # PINCODE VALIDATION
+
+        if (
+            not clean_pincode.isdigit()
+            or len(clean_pincode) != 6
+        ):
+
+            st.error(
+                "Please enter a valid 6-digit pincode."
+            )
+
+            return
+
+
+        # ORDER SUCCESS
+
+        st.session_state.order_placed = True
+
+        st.rerun()
+
+
+# ============================================================
+# OPEN CHECKOUT
+# ============================================================
+
+if st.session_state.show_cart:
+
+    checkout_dialog()
 
 
 # ============================================================
@@ -799,11 +1180,9 @@ def home():
                 AERIS ONE • SMART HYDRATION
             </div>
 
-
             <div class="title">
                 More than a bottle.
             </div>
-
 
             <div class="text">
 
@@ -1231,6 +1610,31 @@ def home():
 
 
     # ========================================================
+    # ADD TO CART
+    # ========================================================
+
+    st.write("")
+
+    cart_col1, cart_col2, cart_col3 = st.columns(
+        [1, 1, 1]
+    )
+
+    with cart_col2:
+
+        if st.button(
+            "🛒 Add AERIS One to Cart",
+            key="home_add_cart",
+            use_container_width=True
+        ):
+
+            st.session_state.cart += 1
+
+            st.success(
+                "AERIS One added to your cart!"
+            )
+
+
+    # ========================================================
     # FEATURES
     # ========================================================
 
@@ -1602,6 +2006,19 @@ def shop():
         st.caption(
             f"Cart: {st.session_state.cart} item(s)"
         )
+
+
+        if st.session_state.cart > 0:
+
+            if st.button(
+                "Proceed to Checkout →",
+                key="shop_checkout",
+                use_container_width=True
+            ):
+
+                st.session_state.show_cart = True
+
+                st.rerun()
 
 
     html("""
